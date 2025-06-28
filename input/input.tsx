@@ -6,7 +6,7 @@ import { cn } from "../utils";
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {}
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-	const { className, type, onChange, ...rest } = props;
+	const { className, type, onChange, onBlur, ...rest } = props;
 	const triggerRef = useRef<HTMLInputElement>(null);
 
 	useImperativeHandle(ref, () => triggerRef.current!);
@@ -27,6 +27,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 			onChange={(e) => {
 				if (triggerRef.current) triggerRef.current.value = e.target.value;
 				onChange?.(e);
+			}}
+			onBlur={(e) => {
+				if (type === "date" || type === "datetime-local") {
+					const date = new Date(e.target.value);
+					if (Number.isNaN(date.getTime())) {
+						if (triggerRef.current) {
+							triggerRef.current.value = "";
+						}
+						e.target.value = "";
+						onChange?.(e);
+					}
+				}
+				onBlur?.(e);
 			}}
 			ref={triggerRef}
 		/>
