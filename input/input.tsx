@@ -38,6 +38,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 						e.target.value = "";
 						onChange?.(e);
 					}
+				} else if (type === "time") {
+					const time = new Date(`1970-01-01T${e.target.value}`);
+					if (Number.isNaN(time.getTime())) {
+						if (triggerRef.current) {
+							triggerRef.current.value = "";
+						}
+						e.target.value = "";
+						onChange?.(e);
+					}
 				}
 				onBlur?.(e);
 			}}
