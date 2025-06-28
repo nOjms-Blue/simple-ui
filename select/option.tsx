@@ -32,7 +32,9 @@ export const SelectOption = forwardRef<HTMLButtonElement, SelectOptionProps>(
 						: "disabled:bg-gray-200 disabled:text-gray-600 disabled:cursor-default",
 					props.className,
 				)}
-				disabled={props.disabled || props.value === context.value}
+				disabled={
+					props.disabled || props.value === context.value || !context.open
+				}
 				onClick={() => {
 					if (context.toggleable) {
 						if (context.value === props.value) {

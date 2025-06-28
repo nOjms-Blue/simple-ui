@@ -6,6 +6,7 @@ export type SelectContextType = {
 	onValueChange: (value: string | null, node: ReactNode) => void;
 	value: string | null;
 	toggleable: boolean;
+	open: boolean;
 };
 
 export const SelectContext = createContext<SelectContextType>({
@@ -13,4 +14,5 @@ export const SelectContext = createContext<SelectContextType>({
 	onValueChange: () => {},
 	value: null,
 	toggleable: false,
+	open: false,
 });

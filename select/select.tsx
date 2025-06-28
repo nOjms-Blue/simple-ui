@@ -1,6 +1,6 @@
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import type { ReactNode } from "react";
-import { forwardRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 import { cn } from "../utils";
 import { SelectContext } from "./context";
@@ -22,6 +22,9 @@ export interface SelectProps {
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 	(props, ref) => {
 		const [node, setNode] = useState<ReactNode>("");
+		const triggerRef = useRef<HTMLButtonElement>(null);
+
+		useImperativeHandle(ref, () => triggerRef.current!);
 
 		return (
 			<div className="relative w-full">
@@ -44,7 +47,16 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 						props.className,
 					)}
 					onClick={props.onOpen}
-					ref={ref}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && !props.disabled && !props.readOnly) {
+							if (props.open) {
+								props.onClose();
+							} else {
+								props.onOpen();
+							}
+						}
+					}}
+					ref={triggerRef}
 					disabled={props.disabled || props.readOnly}
 				>
 					<div className={props.value === null ? "text-gray-400" : ""}>
@@ -67,7 +79,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 				>
 					<SelectContext.Provider
 						value={{
-							onClose: props.onClose,
+							onClose: () => {
+								props.onClose();
+								triggerRef.current?.focus();
+							},
 							onValueChange: (value, node) => {
 								setNode(node);
 								if (props.value !== value) {
@@ -76,6 +91,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 							},
 							value: props.value,
 							toggleable: props.toggleable ?? false,
+							open: props.open,
 						}}
 					>
 						{props.children}
