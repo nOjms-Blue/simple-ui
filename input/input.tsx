@@ -1,12 +1,15 @@
 import type { InputHTMLAttributes } from "react";
-import { forwardRef } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 
 import { cn } from "../utils";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {}
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-	const { className, type, ...rest } = props;
+	const { className, type, onChange, ...rest } = props;
+	const triggerRef = useRef<HTMLInputElement>(null);
+
+	useImperativeHandle(ref, () => triggerRef.current!);
 
 	return (
 		<input
@@ -21,7 +24,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 				className,
 			)}
 			type={type}
-			ref={ref}
+			onChange={(e) => {
+				if (triggerRef.current) triggerRef.current.value = e.target.value;
+				onChange?.(e);
+			}}
+			ref={triggerRef}
 		/>
 	);
 });
