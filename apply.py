@@ -7,6 +7,9 @@ def apply(project_path: str):
 	os.makedirs(components_path, exist_ok=True)
 	ls = os.listdir(".")
 	for name in ls:
+		if name.startswith("."):
+			continue
+		
 		if os.path.isdir(name):
 			shutil.copytree(name, os.path.join(components_path, name))
 		else:
