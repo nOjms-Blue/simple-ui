@@ -15,6 +15,8 @@ export interface SelectProps {
 	onValueChange: (value: string | null) => void;
 	placeholder?: string;
 	toggleable?: boolean;
+	disabled?: boolean;
+	readOnly?: boolean;
 }
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
@@ -33,10 +35,17 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 				<button
 					className={cn(
 						"flex w-full h-10 items-center justify-between px-4 text-gray-800 bg-white rounded-md border border-gray-300 outline-0 cursor-pointer",
+						"hover:bg-gray-200/75 focus:bg-gray-200/75",
+						props.open ? "bg-gray-200/75" : "",
+						"disabled:bg-gray-200 disabled:text-gray-600 disabled:cursor-default",
+						props.readOnly && !props.disabled
+							? "disabled:bg-white disabled:text-gray-800"
+							: "",
 						props.className,
 					)}
 					onClick={props.onOpen}
 					ref={ref}
+					disabled={props.disabled || props.readOnly}
 				>
 					<div className={props.value === null ? "text-gray-400" : ""}>
 						{props.value !== null ? node : props.placeholder}
