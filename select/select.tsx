@@ -1,26 +1,54 @@
 import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 import { cn } from "../utils";
 import { SelectContext } from "./context";
 
 export interface SelectProps {
-	className?: string;
 	children: ReactNode;
 	open: boolean;
+	value: string | null;
+	className?: string;
+	disabled?: boolean;
+	placeholder?: string;
+	readOnly?: boolean;
+	toggleable?: boolean;
 	onOpen: () => void;
 	onClose: () => void;
-	value: string | null;
 	onValueChange: (value: string | null) => void;
-	placeholder?: string;
-	toggleable?: boolean;
-	disabled?: boolean;
-	readOnly?: boolean;
+	onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+	onFocus?: ButtonHTMLAttributes<HTMLButtonElement>["onFocus"];
+	onBlur?: ButtonHTMLAttributes<HTMLButtonElement>["onBlur"];
+	onMouseOver?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseOver"];
+	onMouseOut?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseOut"];
+	onMouseEnter?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseEnter"];
+	onMouseLeave?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseLeave"];
+	onMouseDown?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseDown"];
+	onMouseUp?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseUp"];
+	onMouseMove?: ButtonHTMLAttributes<HTMLButtonElement>["onMouseMove"];
+	onKeyDown?: ButtonHTMLAttributes<HTMLButtonElement>["onKeyDown"];
+	onKeyUp?: ButtonHTMLAttributes<HTMLButtonElement>["onKeyUp"];
 }
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 	(props, ref) => {
+		const {
+			children,
+			open,
+			value,
+			className,
+			disabled,
+			placeholder,
+			readOnly,
+			toggleable,
+			onOpen,
+			onClose,
+			onValueChange,
+			onClick,
+			onKeyDown,
+			...rest
+		} = props;
 		const [node, setNode] = useState<ReactNode>("");
 		const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -31,48 +59,53 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 				<div
 					className={cn(
 						"fixed top-0 left-0 z-50 w-screen min-h-screen overflow-hidden opacity-0",
-						props.open ? "pointer-events-auto" : "pointer-events-none",
+						open ? "pointer-events-auto" : "pointer-events-none",
 					)}
-					onClick={props.onClose}
+					onClick={onClose}
 				/>
 				<button
+					{...rest}
 					className={cn(
 						"flex w-full h-10 items-center justify-between px-4 text-gray-800 bg-white rounded-md border border-gray-300 outline-0 cursor-pointer",
 						"hover:bg-gray-200/75 focus:bg-gray-200/75",
-						props.open ? "bg-gray-200/75" : "",
+						open ? "bg-gray-200/75" : "",
 						"disabled:bg-gray-200 disabled:text-gray-600 disabled:cursor-default",
-						props.readOnly && !props.disabled
+						readOnly && !disabled
 							? "disabled:bg-white disabled:text-gray-800"
 							: "",
-						props.className,
+						className,
 					)}
-					onClick={props.onOpen}
+					onClick={(e) => {
+						onOpen();
+						onClick?.(e);
+					}}
 					onKeyDown={(e) => {
-						if (e.key === "Enter" && !props.disabled && !props.readOnly) {
-							if (props.open) {
-								props.onClose();
+						if (e.key === "Enter" && !disabled && !readOnly) {
+							if (open) {
+								onClose();
 							} else {
-								props.onOpen();
+								onOpen();
 							}
 						}
+						onKeyDown?.(e);
 					}}
 					ref={triggerRef}
-					disabled={props.disabled || props.readOnly}
+					disabled={disabled || readOnly}
 				>
-					<div className={props.value === null ? "text-gray-400" : ""}>
-						{props.value !== null ? node : props.placeholder}
+					<div className={value === null ? "text-gray-400" : ""}>
+						{value !== null ? node : placeholder}
 					</div>
 					<ChevronUpIcon
 						className={cn(
 							"size-5 transition-translate duration-200",
-							props.open ? "rotate-0" : "rotate-180",
+							open ? "rotate-0" : "rotate-180",
 						)}
 					/>
 				</button>
 				<div
 					className={cn(
 						"absolute top-10 left-0 z-60 w-full bg-white rounded-md border border-gray-300 shadow-md transition-opacity duration-200",
-						props.open
+						open
 							? "opacity-100 pointer-events-auto"
 							: "opacity-0 pointer-events-none",
 					)}
@@ -80,21 +113,21 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 					<SelectContext.Provider
 						value={{
 							onClose: () => {
-								props.onClose();
+								onClose();
 								triggerRef.current?.focus();
 							},
 							onValueChange: (value, node) => {
 								setNode(node);
 								if (props.value !== value) {
-									props.onValueChange(value);
+									onValueChange(value);
 								}
 							},
-							value: props.value,
-							toggleable: props.toggleable ?? false,
-							open: props.open,
+							value: value,
+							toggleable: toggleable ?? false,
+							open: open,
 						}}
 					>
-						{props.children}
+						{children}
 					</SelectContext.Provider>
 				</div>
 			</div>
