@@ -1,5 +1,7 @@
+import type { ColorInputProps } from "./color";
+import { ColorInput } from "./color";
 import type { InputProps } from "./input";
 import { Input } from "./input";
 
-export { Input };
-export type { InputProps };
+export { Input, ColorInput };
+export type { InputProps, ColorInputProps };
