@@ -1,12 +1,6 @@
 import { CheckIcon } from "@heroicons/react/24/outline";
 import type { ButtonHTMLAttributes } from "react";
-import {
-	forwardRef,
-	useEffect,
-	useImperativeHandle,
-	useRef,
-	useState,
-} from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 import { cn } from "../utils";
 
@@ -28,11 +22,11 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
 
 		useImperativeHandle(ref, () => triggerRef.current!);
 
-		useEffect(() => {
-			if (typeof checked === "boolean") {
+		if (typeof checked === "boolean") {
+			if (checked !== isChecked) {
 				setIsChecked(checked);
 			}
-		}, [checked]);
+		}
 
 		return (
 			<button
