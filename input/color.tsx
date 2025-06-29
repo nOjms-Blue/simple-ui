@@ -228,7 +228,10 @@ export const ColorInput = forwardRef<HTMLInputElement, ColorInputProps>(
 					}}
 				/>
 				<button
-					className={cn("size-10 rounded-md border border-gray-300", className)}
+					className={cn(
+						"size-10 rounded-md border border-gray-300 cursor-pointer",
+						className,
+					)}
 					style={{ ...style, backgroundColor: color }}
 					onClick={() => {
 						triggerRef.current?.click();
