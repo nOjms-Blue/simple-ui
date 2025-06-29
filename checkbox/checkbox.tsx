@@ -10,12 +10,12 @@ export interface CheckboxProps
 		"children" | "type" | "onChange"
 	> {
 	checked?: boolean;
-	onValueChange?: (value: boolean) => void;
+	onCheckedChange?: (value: boolean) => void;
 }
 
 export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
 	(props, ref) => {
-		const { checked, value, className, onValueChange, onClick, ...rest } =
+		const { checked, value, className, onCheckedChange, onClick, ...rest } =
 			props;
 		const [isChecked, setIsChecked] = useState(!!checked);
 		const triggerRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +44,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
 
 					const newValue = !isChecked;
 					setIsChecked(newValue);
-					onValueChange?.(newValue);
+					onCheckedChange?.(newValue);
 				}}
 				data-checked={isChecked}
 				ref={triggerRef}
